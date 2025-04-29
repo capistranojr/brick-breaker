@@ -1,0 +1,9 @@
+Note: This is a placeholder for a screenshot.
+
+To add a screenshot to your README:
+1. Play the game
+2. Take a screenshot of the gameplay (using PrtScn key or Windows+Shift+S)
+3. Save the screenshot as "screenshot.png" in the root directory of the project
+4. Delete this text file
+
+The screenshot will then appear in your README when viewed on GitHub or other Markdown viewers.

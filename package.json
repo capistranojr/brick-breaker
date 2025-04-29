@@ -1,0 +1,23 @@
+{
+  "name": "neon-brick-breaker",
+  "version": "1.0.0",
+  "description": "A modern take on the classic brick breaker game with neon visuals",
+  "main": "script.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "keywords": [
+    "game",
+    "brick-breaker",
+    "canvas",
+    "javascript"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/preset-env": "^7.16.11",
+    "jest": "^29.5.0",
+    "jest-environment-jsdom": "^29.5.0"
+  }
+}

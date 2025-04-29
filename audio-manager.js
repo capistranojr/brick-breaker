@@ -4,14 +4,19 @@ class AudioManager {
         this.sounds = {};
         this.muted = false;
         this.volume = 0.5;
-        
+
         // Initialize sounds
         this.loadSounds();
-        
-        // Add event listener for mute button
-        document.getElementById('muteButton').addEventListener('click', () => this.toggleMute());
+
+        // Add event listener for mute button if in browser environment
+        if (typeof document !== 'undefined') {
+            const muteButton = document.getElementById('muteButton');
+            if (muteButton) {
+                muteButton.addEventListener('click', () => this.toggleMute());
+            }
+        }
     }
-    
+
     // Load all sound effects
     loadSounds() {
         const soundFiles = {
@@ -24,13 +29,13 @@ class AudioManager {
             levelComplete: 'assets/audio/level_complete.mp3',
             multiball: 'assets/audio/multiball.mp3'
         };
-        
+
         // Create audio elements for each sound
         for (const [name, path] of Object.entries(soundFiles)) {
             this.sounds[name] = new Audio();
             this.sounds[name].src = path;
             this.sounds[name].volume = this.volume;
-            
+
             // Add error handling for missing audio files
             this.sounds[name].addEventListener('error', () => {
                 console.warn(`Audio file not found: ${path}`);
@@ -41,21 +46,23 @@ class AudioManager {
             });
         }
     }
-    
+
     // Initialize fallback audio using Web Audio API
     initFallbackAudio() {
         try {
-            this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            console.log('Using fallback audio generation');
+            if (typeof window !== 'undefined') {
+                this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                console.log('Using fallback audio generation');
+            }
         } catch (e) {
             console.warn('Web Audio API not supported. Sound effects disabled.');
         }
     }
-    
+
     // Play a sound by name
     play(soundName) {
         if (this.muted) return;
-        
+
         // If we have the sound file, play it
         if (this.sounds[soundName] && this.sounds[soundName].error === null) {
             // Clone the audio to allow overlapping sounds
@@ -64,23 +71,23 @@ class AudioManager {
             sound.play().catch(e => console.warn('Error playing sound:', e));
             return;
         }
-        
+
         // Otherwise, generate a fallback sound
         if (this.audioContext) {
             this.generateFallbackSound(soundName);
         }
     }
-    
+
     // Generate fallback sounds using Web Audio API
     generateFallbackSound(soundName) {
         if (!this.audioContext) return;
-        
+
         const oscillator = this.audioContext.createOscillator();
         const gainNode = this.audioContext.createGain();
-        
+
         oscillator.connect(gainNode);
         gainNode.connect(this.audioContext.destination);
-        
+
         // Configure sound based on type
         switch (soundName) {
             case 'paddleHit':
@@ -116,12 +123,12 @@ class AudioManager {
                 oscillator.frequency.value = 600;
                 gainNode.gain.value = 0.1 * this.volume;
                 oscillator.start();
-                
+
                 // Frequency sweep for powerup
                 oscillator.frequency.linearRampToValueAtTime(
                     900, this.audioContext.currentTime + 0.2
                 );
-                
+
                 oscillator.stop(this.audioContext.currentTime + 0.3);
                 break;
             case 'gameOver':
@@ -129,12 +136,12 @@ class AudioManager {
                 oscillator.frequency.value = 300;
                 gainNode.gain.value = 0.1 * this.volume;
                 oscillator.start();
-                
+
                 // Frequency sweep down for game over
                 oscillator.frequency.linearRampToValueAtTime(
                     100, this.audioContext.currentTime + 0.5
                 );
-                
+
                 oscillator.stop(this.audioContext.currentTime + 0.6);
                 break;
             case 'levelComplete':
@@ -142,12 +149,12 @@ class AudioManager {
                 oscillator.frequency.value = 400;
                 gainNode.gain.value = 0.1 * this.volume;
                 oscillator.start();
-                
+
                 // Frequency sweep up for level complete
                 oscillator.frequency.linearRampToValueAtTime(
                     800, this.audioContext.currentTime + 0.3
                 );
-                
+
                 oscillator.stop(this.audioContext.currentTime + 0.4);
                 break;
             case 'multiball':
@@ -155,7 +162,7 @@ class AudioManager {
                 oscillator.frequency.value = 350;
                 gainNode.gain.value = 0.1 * this.volume;
                 oscillator.start();
-                
+
                 // Frequency sweep for multiball
                 oscillator.frequency.linearRampToValueAtTime(
                     700, this.audioContext.currentTime + 0.1
@@ -166,31 +173,35 @@ class AudioManager {
                 oscillator.frequency.linearRampToValueAtTime(
                     700, this.audioContext.currentTime + 0.3
                 );
-                
+
                 oscillator.stop(this.audioContext.currentTime + 0.4);
                 break;
         }
     }
-    
+
     // Toggle mute state
     toggleMute() {
         this.muted = !this.muted;
-        
-        // Update mute button appearance
-        const muteButton = document.getElementById('muteButton');
-        if (this.muted) {
-            muteButton.textContent = '🔇';
-            muteButton.classList.add('muted');
-        } else {
-            muteButton.textContent = '🔊';
-            muteButton.classList.remove('muted');
+
+        // Update mute button appearance if in browser environment
+        if (typeof document !== 'undefined') {
+            const muteButton = document.getElementById('muteButton');
+            if (muteButton) {
+                if (this.muted) {
+                    muteButton.textContent = '🔇';
+                    muteButton.classList.add('muted');
+                } else {
+                    muteButton.textContent = '🔊';
+                    muteButton.classList.remove('muted');
+                }
+            }
         }
     }
-    
+
     // Set volume (0.0 to 1.0)
     setVolume(volume) {
         this.volume = Math.max(0, Math.min(1, volume));
-        
+
         // Update volume for all sounds
         for (const sound of Object.values(this.sounds)) {
             sound.volume = this.volume;
@@ -198,5 +209,13 @@ class AudioManager {
     }
 }
 
-// Export the audio manager
+// Create and export the audio manager
 const audioManager = new AudioManager();
+
+// Export for testing in Node.js environment
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        AudioManager,
+        audioManager
+    };
+}
