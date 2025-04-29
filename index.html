@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Brick Breaker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-ui">
+            <div class="score-container">Score: <span id="score">0</span></div>
+            <div class="lives-container">Lives: <span id="lives">3</span></div>
+            <button id="muteButton" class="sound-button">🔊</button>
+        </div>
+        <canvas id="gameCanvas"></canvas>
+        <div class="level-indicator" id="levelIndicator">LEVEL 1</div>
+        <div class="game-menu" id="gameMenu">
+            <h1 class="neon-text">NEON BRICK BREAKER</h1>
+            <button id="startButton" class="neon-button">START GAME</button>
+            <button id="highScoresButton" class="neon-button">HIGH SCORES</button>
+            <button id="resetScoresButton" class="neon-button">RESET SCORES</button>
+        </div>
+        <div class="game-over" id="gameOver">
+            <h1 class="neon-text">GAME OVER</h1>
+            <p>Final Score: <span id="finalScore">0</span></p>
+            <button id="restartButton" class="neon-button">PLAY AGAIN</button>
+            <button id="highScoresButtonEnd" class="neon-button">HIGH SCORES</button>
+            <button id="quitButton" class="neon-button">QUIT GAME</button>
+        </div>
+        <div class="high-scores" id="highScores">
+            <h2>HIGH SCORES</h2>
+            <ul class="high-scores-list" id="highScoresList">
+                <!-- High scores will be populated here -->
+            </ul>
+            <button id="closeHighScores" class="neon-button">CLOSE</button>
+        </div>
+    </div>
+    <script src="audio-manager.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
